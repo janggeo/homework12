@@ -8,7 +8,8 @@
 
 /*수정사항
 	1)bubble sort 이중 for문 수정
-	2)*/
+	2)search 함수, 해시테이블에 찾고자하는 수가 없을 경우 예외처리 main에서 메시지 출력
+	3)프로그램 종료시 해시 테이블 해제 하도록 freeTable()추가*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -38,6 +39,8 @@ int hashing(int *a, int **ht);
 /* hash table에서 key를 찾아 hash table의 index return */
 int search(int *ht, int key);
 
+/*해시테이블 해제*/
+int freeTable(int* ht);
 
 int main()
 {
@@ -70,6 +73,7 @@ int main()
 			break;
 		case 'q': case 'Q':
 			freeArray(array);	/*배열 해제*/
+			freeTable(hashtable);
 			break;
 		case 's': case 'S':
 			selectionSort(array);	/*선택 정렬*/
@@ -86,31 +90,35 @@ int main()
 		case 'k': case 'K':
 			printf("Quick Sort: \n");
 			printf("----------------------------------------------------------------\n");
-			printArray(array);
+			printArray(array);	//정렬 전
 			quickSort(array, MAX_ARRAY_SIZE);	/*퀵 정렬*/
 			printf("----------------------------------------------------------------\n");
-			printArray(array);
+			printArray(array);	//정렬 후
 
 			break;
 
 		case 'h': case 'H':
 			printf("Hashing: \n");
 			printf("----------------------------------------------------------------\n");
-			printArray(array);
+			printArray(array);	//해시테이블 생성 전
 			hashing(array, &hashtable);
-			printArray(hashtable);
+			printArray(hashtable);	//해시테이블 생성
 			break;
 
 		case 'e': case 'E':
 			printf("Your Key = ");
-			scanf("%d", &key);
-			printArray(hashtable);
-			index = search(hashtable, key);
+			scanf("%d", &key);	//찾고자하는 key 값
+			printArray(hashtable);	//해시테이블 출력
+			index = search(hashtable, key);	//찾고자하는 key값을 가지는 버킷탐색
+			if(index==-1){	//해시테이블에 없을 경우
+				printf("fail to search\n");
+				break;
+			}
 			printf("key = %d, index = %d,  hashtable[%d] = %d\n", key, index, index, hashtable[index]);
 			break;
 
 		case 'p': case 'P':
-			printArray(array);
+			printArray(array);	//배열 출력
 			break;
 		default:
 			printf("\n       >>>>>   Concentration!!   <<<<<     \n");
@@ -142,11 +150,17 @@ int initialize(int** a)
 
 int freeArray(int *a)
 {
-	if(a != NULL)
-		free(a);	//배열 해제
+	if(a != NULL){
+		free(a);
+		}	//배열 해제
 	return 0;
 }
-
+int freeTable(int* ht){
+	if(ht != NULL){
+		free(ht);
+		}//해시 테이블 해제
+	return 0;
+}
 void printArray(int *a)
 {
 	if (a == NULL) {
@@ -344,6 +358,7 @@ int quickSort(int *a, int n)
 }
 
 int hashCode(int key) {
+	/*제산 함수를 이용한 해시 함수*/
    return key % MAX_HASH_TABLE_SIZE;
 }
 
@@ -372,26 +387,28 @@ int hashing(int *a, int **ht)
 	int index = -1;
 	for (int i = 0; i < MAX_ARRAY_SIZE; i++)
 	{
-		key = a[i];
-		hashcode = hashCode(key);
+		key = a[i];	//앞서 랜덤한 값을 가지는 배열로 key 값을 지정
+		hashcode = hashCode(key);	//제산함수를 이용해 해시 주소를 구한다
 		/*
 		printf("key = %d, hashcode = %d, hashtable[%d]=%d\n", key, hashcode, hashcode, hashtable[hashcode]);
 		*/
-		if (hashtable[hashcode] == -1)
+		if (hashtable[hashcode] == -1)	// 해당 해시주소의 버킷이 비어있을경우
 		{
-			hashtable[hashcode] = key;
-		} else 	{
+			hashtable[hashcode] = key;	//해당 해시주소에 key 값 삽입
+		}
+		/*선형 개방 주소법*/ 
+		else 	{
 
 			index = hashcode;
 
-			while(hashtable[index] != -1)
+			while(hashtable[index] != -1)	/*다음버킷에 빈 슬롯이 있는지 조사*/
 			{
 				index = (++index) % MAX_HASH_TABLE_SIZE;
 				/*
 				printf("index = %d\n", index);
 				*/
 			}
-			hashtable[index] = key;
+			hashtable[index] = key;	// 빈 버킷에 key 삽입
 		}
 	}
 
@@ -400,16 +417,20 @@ int hashing(int *a, int **ht)
 
 int search(int *ht, int key)
 {
-	int index = hashCode(key);
+	int index = hashCode(key);	//찾고자하는 key의 제산함수로 해시 주소를 구한다
+	int check_end=index;	//해시 테이블에 찾고자하는 key값이 없을 경우를 check
 
-	if(ht[index] == key)
+	if(ht[index] == key)		//제산함수로 구한 해시주소에 찾고자하는 key값이 있을 경우 반혼
 		return index;
-
+	//제산함수로 구한 해시주소에 찾고자하는 key 값이 없을 경우 다음 버킷을 조사하면서 탐색
 	while(ht[++index] != key)
 	{
-		index = index % MAX_HASH_TABLE_SIZE;
+		index = index % MAX_HASH_TABLE_SIZE;	
+		if(check_end==index){	//처음의 해시주소로 돌아왔을 경우 (찾고자하는 수가 없는경우)
+			return -1;
+		}
 	}
-	return index;
+	return index;	//찾은 버킷의 주소 반환
 }
 
 
