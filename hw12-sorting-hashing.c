@@ -17,16 +17,16 @@
 #define MAX_HASH_TABLE_SIZE 	MAX_ARRAY_SIZE
 
 /* 필요에 따라 함수 추가 가능 */
-int initialize(int **a);
-int freeArray(int *a);
-void printArray(int *a);
+int initialize(int **a);	/*배열 랜덤한 값(0~12)으로 초기화*/
+int freeArray(int *a);		/*동적할당한 배열원소 해제*/
+void printArray(int *a);	/*배열 출력*/
 
-int selectionSort(int *a);
-int insertionSort(int *a);
-int bubbleSort(int *a);
-int shellSort(int *a);
+int selectionSort(int *a);	/*선택 정렬*/
+int insertionSort(int *a);	/*삽입 정렬*/
+int bubbleSort(int *a);		/*버블 정렬*/
+int shellSort(int *a);		/*쉘 정렬*/
 /* recursive function으로 구현 */
-int quickSort(int *a, int n);
+int quickSort(int *a, int n);	/*퀵 정렬*/
 
 
 /* hash code generator, key % MAX_HASH_TABLE_SIZE */
@@ -48,7 +48,7 @@ int main()
 	int key = -1;
 	int index = -1;
 
-	srand(time(NULL));
+	srand(time(NULL));	//랜덤한 시드
 
 	do{
 		printf("----------------------------------------------------------------\n");
@@ -66,28 +66,28 @@ int main()
 
 		switch(command) {
 		case 'z': case 'Z':
-			initialize(&array);
+			initialize(&array);	/*배열 랜덤한 값으로 초기화*/
 			break;
 		case 'q': case 'Q':
-			freeArray(array);
+			freeArray(array);	/*배열 해제*/
 			break;
 		case 's': case 'S':
-			selectionSort(array);
+			selectionSort(array);	/*선택 정렬*/
 			break;
 		case 'i': case 'I':
-			insertionSort(array);
+			insertionSort(array);	/*삽입 정렬*/
 			break;
 		case 'b': case 'B':
-			bubbleSort(array);
+			bubbleSort(array);		/*버블 정렬*/
 			break;
 		case 'l': case 'L':
-			shellSort(array);
+			shellSort(array);		/*쉘 정렬*/
 			break;
 		case 'k': case 'K':
 			printf("Quick Sort: \n");
 			printf("----------------------------------------------------------------\n");
 			printArray(array);
-			quickSort(array, MAX_ARRAY_SIZE);
+			quickSort(array, MAX_ARRAY_SIZE);	/*퀵 정렬*/
 			printf("----------------------------------------------------------------\n");
 			printArray(array);
 
@@ -143,7 +143,7 @@ int initialize(int** a)
 int freeArray(int *a)
 {
 	if(a != NULL)
-		free(a);
+		free(a);	//배열 해제
 	return 0;
 }
 
@@ -153,10 +153,10 @@ void printArray(int *a)
 		printf("nothing to print.\n");
 		return;
 	}
-	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
+	for(int i = 0; i < MAX_ARRAY_SIZE; i++)	//원소 번호출력
 		printf("a[%02d] ", i);
 	printf("\n");
-	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
+	for(int i = 0; i < MAX_ARRAY_SIZE; i++)	//원소 출력
 		printf("%5d ", a[i]);
 	printf("\n");
 }
@@ -272,27 +272,34 @@ int shellSort(int *a)
 	printf("Shell Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a);	//정렬 전 배열 출력
 
+	/*부분 집합의 기준이 되는 간격을 h로 지정*/
+	/*간격을 반으로 줄이면서 반복*/
 	for (h = MAX_ARRAY_SIZE/2; h > 0; h /= 2)
-	{
+	{	
 		for (i = 0; i < h; i++)
 		{
+			/*h 간격 만큼 떨어진 원소 집합에 대해 삽입정렬*/
 			for(j = i + h; j < MAX_ARRAY_SIZE; j += h)
 			{
 				v = a[j];
 				k = j;
+				/*h간격 만큼 떨어진 두개의 원소들에 대해 삽입정렬*/
 				while (k > h-1 && a[k-h] > v)
-				{
+				{	/*h간격 만큼 떨어진 원소 중 뒤의 원소에 
+					h간격 만큼 떨어진 원소 중 앞의 원소값 삽입*/
 					a[k] = a[k-h];
 					k -= h;
 				}
+				/*h간격 만큼 떨어진 원소 중 앞의 원소에 
+					v에 저장해둔 뒤의 원소값 삽입*/
 				a[k] = v;
 			}
 		}
 	}
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a);	//정렬 후 배열
 
 	return 0;
 }
