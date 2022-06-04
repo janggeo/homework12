@@ -6,6 +6,9 @@
  *
  */
 
+/*수정사항
+	1)bubble sort 이중 for문 수정
+	2)*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -38,6 +41,7 @@ int search(int *ht, int key);
 
 int main()
 {
+	printf("-----[2021076029] [장정환]-----\n");
 	char command;
 	int *array = NULL;
 	int *hashtable = NULL;
@@ -201,17 +205,18 @@ int insertionSort(int *a)
 	printf("Insertion Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a);	//정렬전 배열 출력
 
 	for(i = 1; i < MAX_ARRAY_SIZE; i++)
 	{
 		t = a[i];	//i번째 원소값을 저장
 		j = i;		//index값을 저장
 
-		/*정렬되지 않은 집합의 첫번째 원소와 정렬된 집합의 원소들을 비교*/
+		/*정렬되지 않은 집합에서 있는 삽입할 원소와 정렬된 집합의 원소들을 비교*/
+		/*삽입 할 원소의 적절한 위치 j를 구한다*/
 		while (a[j-1] > t && j > 0)	
 		{	
-			/*정렬된 집합의 원소들을 하나씩 가리키도록 조정*/
+			/*정렬된 집합의 원소들을 한칸씩 뒤로 미룬다.*/
 			a[j] = a[j-1];
 			j--;
 		}
@@ -220,24 +225,31 @@ int insertionSort(int *a)
 	}
 
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a);	//정렬 후 배열 출력
 
 	return 0;
 }
 
+/*버블 정렬*/
 int bubbleSort(int *a)
-{
+{	
+	int check=0;
 	int i, j, t;
 
 	printf("Bubble Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a);	//정렬 전 배열 출력
 
-	for(i = 0; i < MAX_ARRAY_SIZE; i++)
+	/*이중 for문을 이용 첫번째 원소부터 자신보다 큰 수가 나오기 전까지 뒤로 이동*/
+	/*고정된 뒤에 반복문 빠져나오는 것이 아닌 고정된 뒤의 원소들에 대해서도 버블정렬*/
+	/*한 단계를 수행한뒤 다시 처음 원소부터 반복 이때 배열에서 제일 큰 수는 배열 맨뒤에 위치하므로
+		범위를 줄여준다.*/
+	for(i = MAX_ARRAY_SIZE; i > 0; i--)
 	{
-		for (j = 0; j < MAX_ARRAY_SIZE; j++)
+		for (j = 1; j < i; j++)
 		{
+			/*앞의 수가 더 클 경우 바로 뒤 원소와 교환*/
 			if (a[j-1] > a[j])
 			{
 				t = a[j-1];
@@ -246,9 +258,9 @@ int bubbleSort(int *a)
 			}
 		}
 	}
-
+	
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a);	//정렬 후 배열 출력
 
 	return 0;
 }
