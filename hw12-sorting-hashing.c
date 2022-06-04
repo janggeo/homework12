@@ -309,27 +309,33 @@ int quickSort(int *a, int n)
 	int v, t;
 	int i, j;
 
-	if (n > 1)
+	if (n > 1) //recursive 종료 조건
 	{
-		v = a[n-1];
-		i = -1;
-		j = n - 1;
+		v = a[n-1];	//pivot(배열의 마지막 원소)
+		/*힙정렬 시 사용할 배열의 왼쪽, 오른쪽 인덱스*/
+		i = -1;		//배열의 왼쪽 인덱스 
+		j = n - 1;	//배열의 오른쪽 인덱스
 
 		while(1)
 		{
-			while(a[++i] < v);
-			while(a[--j] > v);
-
-			if (i >= j) break;
+			while(a[++i] < v);	//pivot보다 큰 값을 찾는다
+			while(a[--j] > v);	//pivot보다 작은 값을 찾는다.
+			
+			/*이미 교환한 원소제외 pivot보다 큰 값이나 작은 값을 못찾을 경우*/
+			if (i >= j) break;	
+			/*큰 값과 작은 값을 교환*/
 			t = a[i];
 			a[i] = a[j];
 			a[j] = t;
 		}
+		/*pivot위치 조정 왼쪽에는 pivot보다 작은값, 오른족에는 pivot보다 큰값들*/
 		t = a[i];
 		a[i] = a[n-1];
 		a[n-1] = t;
 
-		quickSort(a, i);
+		/*정렬된 pivot원소값 기준 왼쪽의 원소에 대해 quicksort */
+		quickSort(a, i);	
+		/*정렬된 pivot원소값 기준 오른쪽 원소에 대해 quicksort*/
 		quickSort(a+i+1, n-i-1);
 	}
 
