@@ -157,6 +157,7 @@ void printArray(int *a)
 	printf("\n");
 }
 
+/*선택 정렬*/
 int selectionSort(int *a)
 {
 	int min;		//매 정렬단계에서 최소값을 저장할 변수
@@ -192,7 +193,7 @@ int selectionSort(int *a)
 	printArray(a);
 	return 0;
 }
-
+/*삽입 정렬*/
 int insertionSort(int *a)
 {
 	int i, j, t;
@@ -204,13 +205,17 @@ int insertionSort(int *a)
 
 	for(i = 1; i < MAX_ARRAY_SIZE; i++)
 	{
-		t = a[i];
-		j = i;
-		while (a[j-1] > t && j > 0)
-		{
+		t = a[i];	//i번째 원소값을 저장
+		j = i;		//index값을 저장
+
+		/*정렬되지 않은 집합의 첫번째 원소와 정렬된 집합의 원소들을 비교*/
+		while (a[j-1] > t && j > 0)	
+		{	
+			/*정렬된 집합의 원소들을 하나씩 가리키도록 조정*/
 			a[j] = a[j-1];
 			j--;
 		}
+		/*정렬된 집합에 원소 삽입*/
 		a[j] = t;
 	}
 
